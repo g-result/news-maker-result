@@ -1,0 +1,38 @@
+// docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("POSTGRES_URL")
+
+  // provider = "sqlite"
+  // url      = env("SQLITE_URL")
+}
+
+// generator erd {
+//   provider = "prisma-erd-generator"
+//     // output = "../ERD.svg"
+// }
+
+model User {
+  id    String     @id // 認証プロバイダーのユーザーID
+  email String  @unique
+  name  String
+  role  Role  @default(USER)
+  posts Post[]
+}
+enum Role {
+  USER
+  ADMIN
+}
+model Post {
+  id        Int     @id @default(autoincrement())
+  title     String
+  content   String
+  published Boolean @default(false)
+  author    User?    @relation(fields: [authorId], references: [id])
+  authorId  String?
+}
